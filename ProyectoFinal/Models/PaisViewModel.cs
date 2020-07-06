@@ -10,7 +10,7 @@ namespace ProyectoFinal.Models
         public string IsoCode { get; set; }
         public string Continent { get; set; }
         public string Location { get; set; }
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         public double TotalCases { get; set; }
         public double NewCases { get; set; }
         public double TotalDeaths { get; set; }
@@ -42,7 +42,7 @@ namespace ProyectoFinal.Models
         public double HospitalBedsPerThousand { get; set; }
         public double LifeExpectancy { get; set; }
 
-        public PaisViewModel(string isoCode, string continent, string location, DateTime date, double totalCases, double newCases, double totalDeaths, double newDeaths, double totalCasesPerMillion, double newCasesPerMillion, double totalDeathsPerMillion, double newDeathsPerMillion, double totalTests, double newTests, double totalTestsPerThousand, double newTestsPerThousand, double newTestsSmoothed, double newTestsSmoothedPerThousand, string testUnits, double stringencyIndex, double population, double populationDensity, double medianAge, double aged65Older, double aged70Older, double gDPPerCapita, double extremePoverty, double cVDDeathRate, double diabetesPrevelance, double femaleSmokers, double maleSmokers, double handwashingFacilities, double hospitalBedsPerThousand, double lifeExpectancy)
+        public PaisViewModel(string isoCode, string continent, string location, string date, double totalCases, double newCases, double totalDeaths, double newDeaths, double totalCasesPerMillion, double newCasesPerMillion, double totalDeathsPerMillion, double newDeathsPerMillion, double totalTests, double newTests, double totalTestsPerThousand, double newTestsPerThousand, double newTestsSmoothed, double newTestsSmoothedPerThousand, string testUnits, double stringencyIndex, double population, double populationDensity, double medianAge, double aged65Older, double aged70Older, double gDPPerCapita, double extremePoverty, double cVDDeathRate, double diabetesPrevelance, double femaleSmokers, double maleSmokers, double handwashingFacilities, double hospitalBedsPerThousand, double lifeExpectancy)
         {
             IsoCode = isoCode;
             Continent = continent;
