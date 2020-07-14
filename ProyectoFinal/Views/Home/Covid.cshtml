@@ -1,17 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Avance del COVID-19 a nivel mundial";
 }
+
+
 <h1 class="display-4 text-center">@ViewData["Title"]</h1>
 <div id="container"></div>
 
+
 @section Scripts{
-    <script>
-        $(function () {
-            getDataByDate('2020-07-05');
+
+    <script>$(function () {
+            getDataByDate('2020-07-04');
         });
 
-        function getDataByDate(date){
-            $.get( "/Home/GetDataByDate?Date=" + date, function( countries ) {
+        
+        $(function () {
+            $("#slider").slider();
+        });
+        
+        function getDataByDate(date) {
+            $.get("/Home/GetDataByDate?Date=" + date, function (countries) {
                 loadMap(countries);
             });
         }
@@ -70,12 +78,12 @@
             });
 
             mapChart.get('cr').select();
-         }
-
-        function getDataByCountry(country){
-             $.get( "/Home/GetDataByCountry?Country=" + country, function( data ) {
+        }
+        function getDataByCountry(country) {
+            $.get("/Home/GetDataByCountry?Country=" + country, function (data) {
                 console.log(data);
             });
-        }
-    </script>
+        }</script>
+
+
 }

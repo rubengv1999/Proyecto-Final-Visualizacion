@@ -50,7 +50,7 @@ namespace ProyectoFinal
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Covid}/{id?}");
             });
         }
     }
