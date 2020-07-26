@@ -51,12 +51,18 @@
     $.get("/Home/GetDates", function (dates) {
         last = dates.length - 1;
         getDataByDate(dates[last]),
+        $(function () {
+            var init = new Date(dates[dates.length - 1]).getTime() / 1000;
+
+            $("#amount").val((new Date(init * 1000).toDateString()));
+        });
         
         $("#slider").slider({
             range: "max",
             min: new Date(dates[0]).getTime() / 1000,
             max: new Date(dates[dates.length - 1]).getTime() / 1000,
             value: new Date(dates[last]).getTime() / 1000,
+            
             slide: function (event, ui) {
                 $("#amount").val((new Date(ui.value * 1000).toDateString()));
                 var date = new Date(ui.value * 1000)
