@@ -49,6 +49,7 @@
     });
 
     $.get("/Home/GetDates", function (dates) {
+
         getDataByDate(dates[dates.length - 1]),
         console.log(dates);
         
@@ -66,11 +67,11 @@
                 getDataByDate(`${year}-${month}-${day}`);
             }
         });
+
     });
 
     function getDataByDate(date) {
         $.get("/Home/GetDataByDate?Date=" + date, function (countries) {
-            console.log(countries);
             loadMap(countries);
         });
     }
@@ -139,24 +140,55 @@
     function getDataByCountry(country) {
         $('#modalGraficos').modal('show');
         $.get("/Home/GetDataByCountry?Country=" + country, function (data) {
+            var dataTotalCases = []; var dataNewDeaths = []; var dataNewCases = []; var dataDates = []; var dataTotalDeaths=[]
+            data.forEach(pais => dataTotalCases.push(pais.totalCases));
+            data.forEach(pais => dataNewDeaths.push(pais.newDeaths));
+            data.forEach(pais => dataNewCases.push(pais.newCases));
+            data.forEach(pais => dataTotalDeaths.push(pais.totalDeaths));
+            data.forEach(pais => dataDates.push((pais.date.split("-"))[1]));
             var ctx = document.getElementById('canvasLineas').getContext('2d');
+            console.log(data);
             window.myLine = new Chart(ctx, config);
-
+            
+            var mesAnterior = 01;
+            var cont = 0;
+            var newCases = 0;
+            var totalCases = 0;
+            var totalDeaths = 0;
+            var newDeaths = 0;
+            for (var mes in dataDates) {
+                if (mesAnterior == dataDates[mes]) {
+                    newCases += dataNewCases[mes];
+                    totalCases += dataTotalCases[mes];
+                    newDeaths += dataNewDeaths[mes];
+                    totalDeaths += dataTotalDeaths[mes];
+                } else {
+                    dataNewCases1[cont] = newCases;
+                    dataTotalCases1[cont] = totalCases;
+                    dataTotalDeaths1[cont] = totalDeaths;
+                    dataNewDeaths1[cont] = newDeaths;
+                    newCases = 0; totalCases = 0; totalDeaths = 0; newDeaths = 0;
+                    mesAnterior = dataDates[mes];
+                    cont++;
+                }
+            }
             var ctx = document.getElementById('canvasBarras').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    labels: ['December','January', 'February', 'March', 'April', 'May', 'June', 'July'],
                     datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
+                        label: 'totalCases',
+                        data: dataTotalCases1,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
                             'rgba(255, 206, 86, 0.2)',
                             'rgba(75, 192, 192, 0.2)',
                             'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(200, 100, 50, 0.2)',
+                            'rgba(100, 124, 40, 0.2)'
                         ],
                         borderColor: [
                             'rgba(255, 99, 132, 1)',
@@ -164,25 +196,39 @@
                             'rgba(255, 206, 86, 1)',
                             'rgba(75, 192, 192, 1)',
                             'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(200, 100, 50, 1)',
+                            'rgba(100, 124, 40, 1)'
                         ],
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            fontColor: "black",
+                            boxWidth: 10,
+                            padding: 20
+                        }
+                    },
                     scales: {
                         yAxes: [{
                             ticks: {
-                                beginAtZero: true
+                                beginAtZero: false
                             }
                         }]
-                    }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Total Cases by country'
+                    },
                 }
             });
         });
     }
 
-
+   
    
 
     window.randomScalingFactor = function () {
@@ -198,47 +244,51 @@
         purple: 'rgb(153, 102, 255)',
         grey: 'rgb(201, 203, 207)'
     };
-  
+    var dataTotalCases1 = [];
+    var dataNewDeaths1 = [];
+    var dataNewCases1 = [];
+    var dataTotalDeaths1 = [];
     var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var config = {
         type: 'line',
         data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            labels: ['December','January', 'February', 'March', 'April', 'May', 'June', 'July'],
             datasets: [{
-                label: 'My First dataset',
+                label: 'New Cases',
                 backgroundColor: window.chartColors.red,
                 borderColor: window.chartColors.red,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
+                data: dataNewCases1,
                 fill: false,
-            }, {
-                label: 'My Second dataset',
+            },
+            {
+                label: 'New Deaths',
                 fill: false,
                 backgroundColor: window.chartColors.blue,
                 borderColor: window.chartColors.blue,
-                data: [
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor(),
-                    randomScalingFactor()
-                ],
-            }]
+                data: dataNewDeaths1,
+                },
+                {
+                    label: 'Total Cases',
+                    fill: false,
+                    backgroundColor: window.chartColors.green,
+                    borderColor: window.chartColors.green,
+                    data: dataTotalCases1,
+                },
+                {
+                    label: 'Total Deaths',
+                    fill: false,
+                    backgroundColor: window.chartColors.yellow,
+                    borderColor: window.chartColors.yellow,
+                    data: dataTotalDeaths1,
+                },
+
+            ]
         },
         options: {
             responsive: true,
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: 'Information about Covid-19'
             },
             tooltips: {
                 mode: 'index',
