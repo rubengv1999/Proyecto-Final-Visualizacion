@@ -17,7 +17,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 1500px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -25,10 +25,10 @@
             <div class="modal-body">
                 <div style="width:100%;">
                     <div class="row">
-                        <div class="col-12 col-sm-8">
+                        <div class="col-12 col-sm-8" id="div-canvas-lineas">
                             <canvas id="canvasLineas"></canvas>
                         </div>
-                        <div class="col-12 col-sm-4 h-100">
+                        <div class="col-12 col-sm-4 h-100" id="div-canvas-barras">
                             <canvas id="canvasBarras" height="300"></canvas>
                         </div>
                     </div>
@@ -49,15 +49,14 @@
     });
 
     $.get("/Home/GetDates", function (dates) {
-
-        getDataByDate(dates[dates.length - 1]),
-        console.log(dates);
+        last = dates.length - 1;
+        getDataByDate(dates[last]),
         
         $("#slider").slider({
             range: "max",
             min: new Date(dates[0]).getTime() / 1000,
             max: new Date(dates[dates.length - 1]).getTime() / 1000,
-            value: new Date(dates[0]).getTime() / 1000,
+            value: new Date(dates[last]).getTime() / 1000,
             slide: function (event, ui) {
                 $("#amount").val((new Date(ui.value * 1000).toDateString()));
                 var date = new Date(ui.value * 1000)
@@ -107,13 +106,15 @@
             },
             colorAxis: {
                 min: 1,
-                type: 'logarithmic',
-                minColor: '#EEEEFF',
-                maxColor: '#000022',
+                type: 'linear',
+                minColor: '#92d14f',
+                maxColor: '#7b0100',
                 stops: [
-                    [0, '#EFEFFF'],
-                    [0.67, '#4444FF'],
-                    [1, '#000022']
+                    [0, '#92d14f'],
+                    [0.25, '#fec923'],
+                    [0.5, '#fa9924  '],
+                    [0.75, '#ea0001'],
+                    [1, '#7b0100']
                 ]
             },
             series: [{
@@ -134,12 +135,12 @@
             }]
         });
 
-       // mapChart.get('cr').select();
     }
 
     function getDataByCountry(country) {
         $('#modalGraficos').modal('show');
         $.get("/Home/GetDataByCountry?Country=" + country, function (data) {
+            $("#exampleModalLabel").text(country);
             var dataTotalCases = []; var dataNewDeaths = []; var dataNewCases = []; var dataDates = []; var dataTotalDeaths=[]
             data.forEach(pais => dataTotalCases.push(pais.totalCases));
             data.forEach(pais => dataNewDeaths.push(pais.newDeaths));
@@ -147,7 +148,6 @@
             data.forEach(pais => dataTotalDeaths.push(pais.totalDeaths));
             data.forEach(pais => dataDates.push((pais.date.split("-"))[1]));
             var ctx = document.getElementById('canvasLineas').getContext('2d');
-            console.log(data);
             window.myLine = new Chart(ctx, config);
             
             var mesAnterior = 01;
@@ -158,10 +158,10 @@
             var newDeaths = 0;
             for (var mes in dataDates) {
                 if (mesAnterior == dataDates[mes]) {
-                    newCases += dataNewCases[mes];
-                    totalCases += dataTotalCases[mes];
-                    newDeaths += dataNewDeaths[mes];
-                    totalDeaths += dataTotalDeaths[mes];
+                    newCases = dataNewCases[mes];
+                    totalCases = dataTotalCases[mes];
+                    newDeaths = dataNewDeaths[mes];
+                    totalDeaths = dataTotalDeaths[mes];
                 } else {
                     dataNewCases1[cont] = newCases;
                     dataTotalCases1[cont] = totalCases;
@@ -174,11 +174,11 @@
             }
             var ctx = document.getElementById('canvasBarras').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
-                    labels: ['December','January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    labels: ['Diciembre', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
                     datasets: [{
-                        label: 'totalCases',
+                        label: 'Total de casos',
                         data: dataTotalCases1,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -221,7 +221,7 @@
                     },
                     title: {
                         display: true,
-                        text: 'Total Cases by country'
+                        text: 'Total de casos por mes'
                     },
                 }
             });
@@ -229,11 +229,6 @@
     }
 
    
-   
-
-    window.randomScalingFactor = function () {
-        return Math.round(-100, 100);
-    };
 
     window.chartColors = {
         red: 'rgb(255, 99, 132)',
@@ -248,34 +243,33 @@
     var dataNewDeaths1 = [];
     var dataNewCases1 = [];
     var dataTotalDeaths1 = [];
-    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var config = {
         type: 'line',
         data: {
-            labels: ['December','January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            labels: ['Diciembre','Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
             datasets: [{
-                label: 'New Cases',
+                label: 'Nuevos casos',
                 backgroundColor: window.chartColors.red,
                 borderColor: window.chartColors.red,
                 data: dataNewCases1,
                 fill: false,
             },
             {
-                label: 'New Deaths',
+                label: 'Nuevas muertes',
                 fill: false,
                 backgroundColor: window.chartColors.blue,
                 borderColor: window.chartColors.blue,
                 data: dataNewDeaths1,
                 },
                 {
-                    label: 'Total Cases',
+                    label: 'Total de casos',
                     fill: false,
                     backgroundColor: window.chartColors.green,
                     borderColor: window.chartColors.green,
                     data: dataTotalCases1,
                 },
                 {
-                    label: 'Total Deaths',
+                    label: 'Total de muertes',
                     fill: false,
                     backgroundColor: window.chartColors.yellow,
                     borderColor: window.chartColors.yellow,
@@ -288,7 +282,7 @@
             responsive: true,
             title: {
                 display: true,
-                text: 'Information about Covid-19'
+                text: 'Estadísticas por mes'
             },
             tooltips: {
                 mode: 'index',
