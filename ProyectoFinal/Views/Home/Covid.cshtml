@@ -5,6 +5,10 @@
 
 <h1 class="display-4 text-center">@ViewData["Title"]</h1>
 <div id="container"></div>
+<p>
+    <label for="amount">Fecha seleccionada:</label>
+    <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+</p>
 
 
 <div class="mx-3 mt-3" id="slider"></div>
@@ -41,13 +45,27 @@
 <script>
 
     $(function () {
-        getFechas();
+       
     });
 
     $.get("/Home/GetDates", function (dates) {
+        getDataByDate(dates[dates.length - 1]),
         console.log(dates);
-        getDataByDate(dates[dates.length - 1]);
-        $("#slider").slider();
+        
+        $("#slider").slider({
+            range: "max",
+            min: new Date(dates[0]).getTime() / 1000,
+            max: new Date(dates[dates.length - 1]).getTime() / 1000,
+            value: new Date(dates[0]).getTime() / 1000,
+            slide: function (event, ui) {
+                $("#amount").val((new Date(ui.value * 1000).toDateString()));
+                var date = new Date(ui.value * 1000)
+                var year = date.getFullYear();
+                var month = ("0" + (date.getMonth() + 1)).slice(-2);
+                var day = ("0" + date.getDate()).slice(-2);
+                getDataByDate(`${year}-${month}-${day}`);
+            }
+        });
     });
 
     function getDataByDate(date) {
@@ -88,7 +106,7 @@
             },
             colorAxis: {
                 min: 1,
-                type: 'linear',
+                type: 'logarithmic',
                 minColor: '#EEEEFF',
                 maxColor: '#000022',
                 stops: [

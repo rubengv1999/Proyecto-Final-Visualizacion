@@ -43,7 +43,7 @@ namespace ProyectoFinal.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<string> GetDates() => paisesViewModel.Select(x => x.Date).Distinct().ToList();
+        public IEnumerable<string> GetDates() => paisesViewModel.Select(x => x.Date).Distinct().ToList().OrderBy(x => x);
 
         [HttpGet]
         public IEnumerable<PaisViewModel> GetDataByDate(string Date) => paisesViewModel.Where(x => x.Date == Date);
