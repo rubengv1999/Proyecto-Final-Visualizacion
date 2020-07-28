@@ -21,11 +21,6 @@ namespace ProyectoFinal.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public IActionResult Covid()
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -43,6 +38,11 @@ namespace ProyectoFinal.Controllers
             return View();
         }
 
+        public IActionResult Country(string country)
+        {
+            return PartialView("Country", country);
+        }
+
         [HttpGet]
         public IEnumerable<string> GetDates() => paisesViewModel.Select(x => x.Date).Distinct().ToList().OrderBy(x => x);
 
@@ -50,7 +50,7 @@ namespace ProyectoFinal.Controllers
         public IEnumerable<PaisViewModel> GetDataByDate(string Date) => paisesViewModel.Where(x => x.Date == Date);
 
         [HttpGet]
-        public IEnumerable<PaisViewModel> GetDataByCountry(string Country) => paisesViewModel.OrderBy(x => x.Date).Where(x => x.Location == Country);
+        public IEnumerable<PaisViewModel> GetDataByCountry(string Country) => paisesViewModel.Where(x => x.Location == Country);
         
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
