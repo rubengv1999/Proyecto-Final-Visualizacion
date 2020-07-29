@@ -40,7 +40,7 @@ namespace ProyectoFinal.Controllers
 
         public IActionResult Country(string country)
         {
-            return View("Country", country);
+            return PartialView("Country", country);
         }
 
         [HttpGet]
